@@ -1,0 +1,3 @@
+java -jar jflex-full-1.8.2.jar Lexer.flex
+java -jar jflex-full-1.8.2.jar LexerCup.flex
+java -jar java-cup-11a.jar -parser Sintax -symbols sym Sintax.cup
