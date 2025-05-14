@@ -1,0 +1,23 @@
+nivel() POW
+Mario a;
+Mario b;
+a=3;
+b=5;
+agacharse(3);
+mushroom;
+Tuberia(a<b) POW
+Luigi c;
+c=1.5;
+POW
+Mario i;
+Puente (i=0;i<5;i++;) POW
+Chomp d;
+d="hola";
+POW
+Mario opcion;
+Castillo(opcion) POW 
+Toad 1 POW opcion=1; POW 
+Toad 2 POW opcion=2; POW
+Toad 3 POW opcion=3; POW
+POW
+POW
