@@ -1,0 +1,145 @@
+package cod;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+terminal Linea,Puente,Mario,Luigi,Chomp,Metodo,Toad,Castillo,Peach,PowerUp,
+    Igual, Suma, Resta, Multiplicacion, Division, Op_logico, Op_relacional,
+    Op_atribucion, Op_incremento, Op_booleano, Parentesis_a, Parentesis_c,
+    Llave_a, Llave_c, Corchete_a, Corchete_c, Main, P_coma, Identificador,Tuberia,
+    NumeroFlotante, Numero, Cadena, ERROR, Coma;
+non terminal INICIO, SENTENCIA, DECLARACION, DECLARACION_SIMPLE, DECLARACION_ASIGNACION, DECLARACION_INCREMENTO, DECLARACION_PUENTE, TUBERIA, LISTA_IDS,
+PUENTE, SENTENCIA_BOOLEANA, SENTENCIA_PUENTE, ASIGNACION, OPERACION, EDEC,METODO, CASTILLO,TOAD,POWERUP, EXPRESION, TERMINO, FACTOR;
+
+start with INICIO;
+
+INICIO ::= 
+    Main Parentesis_a Parentesis_c Llave_a SENTENCIA Llave_c
+;
+SENTENCIA ::= 
+    SENTENCIA DECLARACION |
+    DECLARACION |
+    SENTENCIA ASIGNACION |
+    ASIGNACION |
+    SENTENCIA TUBERIA | 
+    TUBERIA |
+    SENTENCIA PUENTE |
+    PUENTE|
+    SENTENCIA METODO |
+    METODO|
+    SENTENCIA CASTILLO|
+    CASTILLO|
+    SENTENCIA POWERUP|
+    POWERUP
+   
+;
+
+
+LISTA_IDS ::= Identificador
+            | Identificador Coma LISTA_IDS ;
+
+DECLARACION ::= 
+    DECLARACION_SIMPLE |
+    DECLARACION_ASIGNACION |
+    DECLARACION_INCREMENTO ;
+
+DECLARACION_SIMPLE ::= 
+    Mario LISTA_IDS P_coma |
+    Luigi LISTA_IDS P_coma |
+    Chomp LISTA_IDS P_coma ;
+
+DECLARACION_ASIGNACION ::= 
+    Mario Identificador Op_atribucion Numero P_coma |
+    Luigi Identificador Op_atribucion NumeroFlotante P_coma |
+    Chomp Identificador Igual Cadena P_coma ;
+
+DECLARACION_INCREMENTO ::= 
+    Mario Identificador Op_incremento P_coma |
+    Mario Op_incremento Identificador P_coma ;
+
+ASIGNACION ::= 
+    Identificador Igual EXPRESION P_coma |
+    Identificador Igual Cadena P_coma
+;
+
+EXPRESION ::= 
+    EXPRESION Suma TERMINO |
+    EXPRESION Resta TERMINO |
+    TERMINO
+;
+
+TERMINO ::= 
+    TERMINO Multiplicacion FACTOR |
+    TERMINO Division FACTOR |
+    FACTOR
+;
+
+FACTOR ::= 
+    Identificador |
+    Numero |
+    NumeroFlotante |
+    Parentesis_a EXPRESION Parentesis_c
+;
+
+
+TUBERIA ::= Tuberia Parentesis_a SENTENCIA_BOOLEANA Parentesis_c Llave_a SENTENCIA Llave_c
+;
+
+SENTENCIA_BOOLEANA ::= 
+    Op_booleano | 
+    Identificador Op_relacional Op_booleano |
+    Identificador Op_relacional Numero |
+    Identificador Op_relacional NumeroFlotante |
+    Identificador Op_relacional Identificador |
+    Identificador Op_relacional Cadena |
+    Numero Op_relacional Op_booleano |
+    NumeroFlotante Op_relacional Op_booleano |
+    Numero Op_relacional Identificador |
+    NumeroFlotante Op_relacional Identificador
+;
+
+PUENTE ::= Puente Parentesis_a SENTENCIA_PUENTE Parentesis_c Llave_a SENTENCIA Llave_c
+;
+SENTENCIA_PUENTE ::= 
+    Mario Identificador Igual Numero P_coma SENTENCIA_BOOLEANA P_coma DECLARACION_PUENTE |
+    Luigi Identificador Igual NumeroFlotante P_coma SENTENCIA_BOOLEANA P_coma DECLARACION_PUENTE |
+    Identificador Igual Numero P_coma SENTENCIA_BOOLEANA P_coma DECLARACION_PUENTE |
+    Identificador Igual NumeroFlotante P_coma SENTENCIA_BOOLEANA P_coma DECLARACION_PUENTE
+;
+
+DECLARACION_PUENTE ::= 
+    Identificador Op_atribucion Numero |
+    Identificador Op_atribucion NumeroFlotante |
+    Identificador Op_incremento P_coma | 
+    Op_incremento Identificador
+;
+
+POWERUP ::=
+    PowerUp P_coma
+;
+
+METODO ::= 
+    Metodo Parentesis_a Numero Parentesis_c P_coma |
+    Metodo Parentesis_a Identificador Parentesis_c P_coma
+;
+
+CASTILLO ::=
+    Castillo Parentesis_a Identificador Parentesis_c Llave_a TOAD Llave_c
+;
+TOAD ::= Toad Numero Llave_a SENTENCIA Llave_c|
+         TOAD Toad Numero Llave_a SENTENCIA Llave_c|
+         Peach  Llave_a SENTENCIA Llave_c
+;
+
