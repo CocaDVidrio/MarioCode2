@@ -34,6 +34,9 @@ import java_cup.runtime.Symbol;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.List;
 
 
 public class Compilador extends javax.swing.JFrame {
@@ -659,28 +662,46 @@ private boolean esCompatible(String tipoVariable, String tipoValor) {
     return false;
 }
 
-    private void printCI() {
-        System.out.println("Seccion del de 3 direcciones");
-        
-        Parser par = new Parser(tokens);
-         List<ASTNode> ast = par.parse();
-    
+ private void printCI() {
+    System.out.println("Sección del de 3 direcciones");
+
+    Parser par = new Parser(tokens);
+    List<ASTNode> ast = par.parse();
+
     // Imprimir AST
     ASTPrinter printer = new ASTPrinter();
     for (ASTNode node : ast) {
         node.accept(printer);
     }
+
     // Generar TAC
     TACGenerator tacGenerator = new TACGenerator();
     for (ASTNode node : ast) {
         node.accept(tacGenerator);
     }
-    // Imprimir TAC
+
+    // Imprimir y guardar TAC
     System.out.println("Código de Tres Direcciones (TAC):");
-    for (String tac : tacGenerator.getTACCode()) {
-        System.out.println(tac);
+    try (PrintWriter out = new PrintWriter(new FileWriter("tac.txt"))) {
+        for (String tac : tacGenerator.getTACCode()) {
+            System.out.println(tac);  // Consola
+            out.println(tac);        // Archivo tac.txt
+        }
+        System.out.println("Archivo tac.txt generado correctamente.");
+    } catch (IOException e) {
+        System.err.println("Error al escribir tac.txt: " + e.getMessage());
+        return;
+    }
+
+    // Generar archivo Jasmin
+    try {
+        GeneradorJasmin.generarArchivo("tac.txt", "Programa.j");
+        System.out.println("Archivo Programa.j generado correctamente.");
+    } catch (IOException e) {
+        System.err.println("Error al generar Programa.j: " + e.getMessage());
     }
 }
+
     
     
     private void colorAnalysis() {
