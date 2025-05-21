@@ -1,0 +1,16 @@
+a = 3
+b = 5
+call agacharse, 3
+call mushroom
+ifFalse a<b goto L0
+L0:
+c = 1.5
+i=0
+L1:
+ifFalse i<5 goto L2
+i++;
+goto L1
+L2:
+opcion = 1
+opcion = 2
+opcion = 3

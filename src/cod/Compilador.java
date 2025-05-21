@@ -682,7 +682,7 @@ private boolean esCompatible(String tipoVariable, String tipoValor) {
 
     // Imprimir y guardar TAC
     System.out.println("Código de Tres Direcciones (TAC):");
-    try (PrintWriter out = new PrintWriter(new FileWriter("tac.txt"))) {
+    try (PrintWriter out = new PrintWriter(new FileWriter("src/cod/tac.txt"))) {
         for (String tac : tacGenerator.getTACCode()) {
             System.out.println(tac);  // Consola
             out.println(tac);        // Archivo tac.txt
@@ -695,7 +695,7 @@ private boolean esCompatible(String tipoVariable, String tipoValor) {
 
     // Generar archivo Jasmin
     try {
-        GeneradorJasmin.generarArchivo("tac.txt", "Programa.j");
+        GeneradorJasmin.generarArchivo("src/cod/tac.txt", "src/cod/Programa.j");
         System.out.println("Archivo Programa.j generado correctamente.");
     } catch (IOException e) {
         System.err.println("Error al generar Programa.j: " + e.getMessage());
