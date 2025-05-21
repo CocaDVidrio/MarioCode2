@@ -1,18 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cod;
 
-/**
- *
- * @author gudja
- */
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
+
 public class GeneradorJasmin {
-    
+
     public static void generarArchivo(String inputPath, String outputPath) throws IOException {
         List<String> lines = Files.readAllLines(new File(inputPath).toPath());
 
@@ -26,12 +19,13 @@ public class GeneradorJasmin {
             out.println();
 
             Map<String, Integer> variableSlots = new HashMap<>();
-             int[] nextSlot = {0};
+            int[] nextSlot = {0};
 
             for (String line : lines) {
                 line = line.trim();
                 if (line.isEmpty()) continue;
 
+                // Asignaciones: a = 3  o  b = 1.5
                 if (line.matches("[a-zA-Z][a-zA-Z0-9_]*\\s*=\\s*\\d+(\\.\\d+)?")) {
                     String[] parts = line.split("=");
                     String var = parts[0].trim();
@@ -50,6 +44,7 @@ public class GeneradorJasmin {
                         out.println("    istore " + slot);
                     }
 
+                // call agacharse, 3
                 } else if (line.startsWith("call ")) {
                     if (line.contains(",")) {
                         String[] parts = line.substring(5).split(",");
@@ -62,43 +57,55 @@ public class GeneradorJasmin {
                         out.println("    invokestatic Game/" + method + "()V");
                     }
 
-                } else if (line.matches("ifFalse \\w+<\\w+ goto \\w+")) {
+                // ifFalse a<b goto L0  o  ifFalse i<5 goto L2
+                } else if (line.matches("ifFalse \\w+<\\w+ goto \\w+") || line.matches("ifFalse \\w+<\\d+ goto \\w+")) {
                     String[] parts = line.split(" ");
                     String[] cond = parts[1].split("<");
-                    String left = cond[0];
-                    String right = cond[1];
+                    String left = cond[0].trim();
+                    String right = cond[1].trim();
                     String label = parts[3];
 
-                    out.println("    iload " + variableSlots.get(left));
-                    out.println("    iload " + variableSlots.get(right));
+                    // slot para left
+                    Integer leftSlot = variableSlots.get(left);
+                    if (leftSlot == null) {
+                        leftSlot = nextSlot[0]++;
+                        variableSlots.put(left, leftSlot);
+                    }
+                    out.println("    iload " + leftSlot);
+
+                    // right puede ser constante o variable
+                    if (right.matches("\\d+")) {
+                        out.println("    ldc " + right);
+                    } else {
+                        Integer rightSlot = variableSlots.get(right);
+                        if (rightSlot == null) {
+                            rightSlot = nextSlot[0]++;
+                            variableSlots.put(right, rightSlot);
+                        }
+                        out.println("    iload " + rightSlot);
+                    }
+
                     out.println("    if_icmpge " + label);
 
-                } else if (line.matches("ifFalse \\w+<\\d+ goto \\w+")) {
-                    String[] parts = line.split(" ");
-                    String[] cond = parts[1].split("<");
-                    String left = cond[0];
-                    String right = cond[1];
-                    String label = parts[3];
-
-                    out.println("    iload " + variableSlots.get(left));
-                    out.println("    ldc " + right);
-                    out.println("    if_icmpge " + label);
-
+                // i++; o j++;
                 } else if (line.matches("\\w+\\+\\+;?")) {
-                    String var = line.replace("++", "").trim();
+                    String var = line.replace("++", "").replace(";", "").trim();
                     Integer slot = variableSlots.get(var);
                     if (slot == null) {
-                    slot = nextSlot[0]++;
-                    variableSlots.put(var, slot);
-                        }
+                        slot = nextSlot[0]++;
+                        variableSlots.put(var, slot);
+                    }
                     out.println("    iinc " + slot + " 1");
 
+                // goto L1
                 } else if (line.matches("goto \\w+")) {
                     out.println("    " + line);
 
+                // L1:  o L2:
                 } else if (line.matches("\\w+:")) {
                     out.println(line);
 
+                // Cualquier otra instrucción no reconocida
                 } else {
                     System.out.println("Instrucción no reconocida: " + line);
                 }

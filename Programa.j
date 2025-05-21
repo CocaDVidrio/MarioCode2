@@ -22,16 +22,16 @@ L0:
     istore 3
 L1:
     iload 3
-    iload null
+    ldc 5
     if_icmpge L2
-    iinc 4 1
+    iinc 3 1
     goto L1
 L2:
     ldc 1
-    istore 5
+    istore 4
     ldc 2
-    istore 5
+    istore 4
     ldc 3
-    istore 5
+    istore 4
     return
 .end method
