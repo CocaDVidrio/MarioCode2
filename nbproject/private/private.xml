@@ -3,8 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/Users/alejo/OneDrive/Documentos/automatas%20II/Compilador/MarioCode2/src/cod/Compilador.java</file>
             <file>file:/C:/Users/alejo/OneDrive/Documentos/automatas%20II/Compilador/MarioCode2/src/cod/Comandos.txt</file>
+=======
+            <file>file:/C:/Users/gudja/OneDrive/Documentos/8vo%20semestre/LyAII/Proyecto/MarioCode2/src/cod/Compilador.java</file>
+            <file>file:/C:/Users/gudja/OneDrive/Documentos/8vo%20semestre/LyAII/Proyecto/MarioCode2/src/cod/GeneradorJasmin.java</file>
+            <file>file:/C:/Users/gudja/OneDrive/Documentos/8vo%20semestre/LyAII/Proyecto/MarioCode2/src/cod/Programa.java</file>
+>>>>>>> 4dc40d06fe74c2f285cc7f7643bca6739564d03b
         </group>
     </open-files>
 </project-private>
