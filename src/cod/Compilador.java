@@ -52,6 +52,8 @@ public class Compilador extends javax.swing.JFrame {
     private ArrayList<Production> identProd;
     private HashMap<String, String> identificadores;
     private boolean codeHasBeenCompiled = false;
+    private FreameReproductor rep;
+    private Reproductor reproductor;
 
     /**
      * Creates new form Compilador
@@ -62,6 +64,9 @@ public class Compilador extends javax.swing.JFrame {
         for (int i = 0; i < 80 * 300; i++){
             System.out.println("\b");
         }
+        rep = new FreameReproductor();
+     
+        this.reproductor = new Reproductor();
     }
 
     private void init() {
@@ -401,6 +406,7 @@ public class Compilador extends javax.swing.JFrame {
         errores();
         printConsole();
         printCI();
+        reproducir();
         codeHasBeenCompiled = true;
     }
 
@@ -738,7 +744,67 @@ private boolean esCompatible(String tipoVariable, String tipoValor) {
             Functions.addRowDataInTable(tblTokens, data);
         });
     }
+    private int tokenIndex = 0;
 
+    private void reproducir() {
+        tokenIndex = 0;
+        reproducirSiguiente();
+    }
+
+    private void reproducirSiguiente() {
+        if (tokenIndex >= tokens.size()) {
+            System.out.println("Todos los tokens procesados.");
+            return;
+        }
+
+        Token current = tokens.get(tokenIndex);
+
+        if (current.getLexeme().equals("mover")) {
+            System.out.println("Ejecutando token 'mover' en posición " + tokenIndex);
+
+            bucle(1, Integer.parseInt(tokens.get(tokenIndex+4).getLexeme()), "C:\\Users\\alejo\\Video\\pruebaV.mp4", () -> {
+                // Callback que se ejecuta cuando termina todo el ciclo de video
+                tokenIndex++;
+                reproducirSiguiente(); // solo entonces avanza al siguiente token
+            });
+        } else 
+        if (current.getLexeme().equals("saltar")) {
+            System.out.println("Ejecutando token 'mover' en posición " + tokenIndex);
+
+            bucle(1, Integer.parseInt(tokens.get(tokenIndex+4).getLexeme()), "C:\\Users\\alejo\\Video\\pruebaV.mp4", () -> {
+                // Callback que se ejecuta cuando termina todo el ciclo de video
+                tokenIndex++;
+                reproducirSiguiente(); // solo entonces avanza al siguiente token
+            });
+        } else {
+            // Si no es un token con video, simplemente avanza
+            tokenIndex++;
+            reproducirSiguiente();
+        }
+    }
+            public void bucle(int i, int n, String ruta, Runnable alFinalizar) {
+        if (i >= n) {
+            this.reproductor.setRuta(ruta);
+        this.reproductor.setJpanel(rep.Panel);
+        rep.setVisible(true);
+            this.reproductor.mostrarVideo();  
+            this.reproductor.getMediaPlayer().setOnEndOfMedia(() -> {
+                System.out.println("Fin de la última reproducción");
+                alFinalizar.run(); // <- Avanza al siguiente token
+            });
+            return;
+        }
+
+        this.reproductor.setRuta(ruta);
+        this.reproductor.setJpanel(rep.Panel);
+        rep.setVisible(true);
+        this.reproductor.mostrarVideo();  
+        this.reproductor.getMediaPlayer().setOnEndOfMedia(() -> {
+            System.out.println("Reproducción " + i + " terminada. Reproduciendo siguiente...");
+            bucle(i + 1, n, ruta, alFinalizar); // sigue en la recursión
+        });
+    }
+            
     private void printConsole() {
         int sizeErrors = errors.size();
         if (sizeErrors > 0) {
