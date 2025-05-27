@@ -37,6 +37,7 @@ import javax.swing.Timer;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.List;
+import javafx.application.Platform;
 
 
 public class Compilador extends javax.swing.JFrame {
@@ -744,56 +745,427 @@ private boolean esCompatible(String tipoVariable, String tipoValor) {
             Functions.addRowDataInTable(tblTokens, data);
         });
     }
-    private int tokenIndex = 0;
+    
+private int tokenIndex = 0;
+boolean tuberia = false;
+boolean puente = false;
+boolean ignorar = true;
+int pows = 0;
+String mundoAct = "ow";
+String powerAct = "base";
+int mario= 0;
+int bu = 0;
+int pivote = 0;
 
-    private void reproducir() {
-        tokenIndex = 0;
+
+private void reproducir() {
+    tokenIndex = 0;
+    reproducirSiguiente();
+}
+
+private void reproducirSiguiente() {
+    if (tokenIndex >= tokens.size()) {
+        System.out.println("Todos los tokens procesados.");
+        return;
+    }
+
+    Token current = tokens.get(tokenIndex);
+    
+    if(current.getLexeme().equals("mover")){
+      mario =+ Integer.parseInt(tokens.get(tokenIndex+2).getLexeme());
+      System.out.println(mario);
+    }
+    
+    if(current.getLexeme().equals("saltar")){
+      mario = mario * Integer.parseInt(tokens.get(tokenIndex+2).getLexeme());
+      System.out.println(mario);
+    }
+    
+    if (current.getLexeme().equals("Tuberia")){
+        if(condicionCumple(tokens.get(tokenIndex+3).getLexeme(),tokens.get(tokenIndex+4).getLexeme(), mario)){
+        tuberia = true;
+        ignorar = false;
+        pows =+ 2;
+        mundoAct = "tb";
+        }
+        else{
+        tuberia = true;
+        ignorar = true;
+        }
+    }
+    
+    if(current.getLexeme().equals("END") && tuberia){
+        tuberia =false;
+        mundoAct = "ow";
+        System.out.println("si");
+        //ignorar = true;
+    }
+    
+    if (current.getLexeme().equals("Puente")){
+        puente = true;
+        pows =+ 2;
+        mundoAct = "pt";
+        bu = Integer.parseInt(tokens.get(tokenIndex+9).getLexeme());
+        pivote = tokenIndex+1;
+        System.out.println(bu);
+    }
+
+    if( current.getLexeme().equals("END") && puente && bu>0){
+        //mundoAct = "ow";
+        bu=-1;
+        tokenIndex = pivote;
+        
+    }
+
+    if(current.getLexeme().equals("mushroom")){
+        powerAct="msh";
+    }
+    if(current.getLexeme().equals("ffuego")){
+        powerAct="ffu";
+    }    
+    if(current.getLexeme().equals("tanuki")){
+        powerAct="tan";
+    }    
+
+    switch(mundoAct){
+        case "ow":
+               switch(powerAct){
+                   case "msh":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en ow' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camHonOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en ow' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salFueOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       break;
+                   case "ffu":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en ow' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camFueOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en ow' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salFueOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       break;
+                   case "tan":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en ow' en posición " + tokenIndex);
+                            
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camTanOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en ow' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salTanOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       break;
+                   case "base":
+                         if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en ow' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camBasOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en ow' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salBasOver.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       }
+            break;
+        case "pt":
+               switch(powerAct){
+                   case "msh":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camHonPue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salHonPue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       break;
+                   case "ffu":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camFuePue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salFuePue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       break;
+                   case "tan":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camTanPue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salTanPue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                    break;
+                   case "base":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camBasPue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salBasPue.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                }
+            break;
+        case "tb":
+            if(ignorar){
+               switch(powerAct){
+                   case "msh":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camHonSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salHonSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       break;
+                   case "ffu":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camFueSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salFueSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                       break;
+                   case "tan":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camTanSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salTanSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        } break;
+                   case "base":
+                       if (current.getLexeme().equals("mover")) {
+                            System.out.println("Ejecutando token 'mover en pt' en posición " + tokenIndex);
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("camBasSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                          
+                        } 
+                        else if (current.getLexeme().equals("saltar")) {
+                            System.out.println("Ejecutando token 'saltar en pt' en posición " + tokenIndex);
+
+                            bucle(1, Integer.parseInt(tokens.get(tokenIndex+2).getLexeme()), obtenerRutaVideo("salBasSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }else if (current.getLexeme().equals("Tuberia")) {
+                            System.out.println("Ejecutando token 'tuberia en tb' en posición " + tokenIndex);
+
+                            bucle(1, 1, obtenerRutaVideo("entBasSub.mp4"), () -> {
+                                // Callback que se ejecuta cuando termina todo el ciclo de video
+                                tokenIndex++;
+                                reproducirSiguiente(); // solo entonces avanza al siguiente token
+                            });
+                        }
+                        else {
+                            // Si no es un token con video, simplemente avanza
+                            tokenIndex++;
+                            reproducirSiguiente();
+                        }
+                                   }
+                        }
+    else{
+        tokenIndex++;
         reproducirSiguiente();
     }
-
-    private void reproducirSiguiente() {
-        if (tokenIndex >= tokens.size()) {
-            System.out.println("Todos los tokens procesados.");
-            return;
-        }
-
-        Token current = tokens.get(tokenIndex);
-
-        if (current.getLexeme().equals("mover")) {
-            System.out.println("Ejecutando token 'mover' en posición " + tokenIndex);
-
-            bucle(1, Integer.parseInt(tokens.get(tokenIndex+4).getLexeme()), "C:\\Users\\alejo\\Video\\pruebaV.mp4", () -> {
-                // Callback que se ejecuta cuando termina todo el ciclo de video
-                tokenIndex++;
-                reproducirSiguiente(); // solo entonces avanza al siguiente token
-            });
-        } else 
-        if (current.getLexeme().equals("saltar")) {
-            System.out.println("Ejecutando token 'mover' en posición " + tokenIndex);
-
-            bucle(1, Integer.parseInt(tokens.get(tokenIndex+4).getLexeme()), "C:\\Users\\alejo\\Video\\pruebaV.mp4", () -> {
-                // Callback que se ejecuta cuando termina todo el ciclo de video
-                tokenIndex++;
-                reproducirSiguiente(); // solo entonces avanza al siguiente token
-            });
-        } else {
-            // Si no es un token con video, simplemente avanza
-            tokenIndex++;
-            reproducirSiguiente();
-        }
+            break;
     }
-            public void bucle(int i, int n, String ruta, Runnable alFinalizar) {
-        if (i >= n) {
-            this.reproductor.setRuta(ruta);
-        this.reproductor.setJpanel(rep.Panel);
-        rep.setVisible(true);
-            this.reproductor.mostrarVideo();  
-            this.reproductor.getMediaPlayer().setOnEndOfMedia(() -> {
-                System.out.println("Fin de la última reproducción");
-                alFinalizar.run(); // <- Avanza al siguiente token
-            });
-            return;
-        }
+}
+
+        public void bucle(int i, int n, String ruta, Runnable alFinalizar) {
+            if (i >= n) {
+                this.reproductor.setRuta(ruta);
+            this.reproductor.setJpanel(rep.Panel);
+            rep.setVisible(true);
+                this.reproductor.mostrarVideo();  
+                this.reproductor.getMediaPlayer().setOnEndOfMedia(() -> {
+                    System.out.println("Fin de la última reproducción");
+                    alFinalizar.run(); // <- Avanza al siguiente token
+                });
+                return;
+            }
 
         this.reproductor.setRuta(ruta);
         this.reproductor.setJpanel(rep.Panel);
@@ -804,7 +1176,31 @@ private boolean esCompatible(String tipoVariable, String tipoValor) {
             bucle(i + 1, n, ruta, alFinalizar); // sigue en la recursión
         });
     }
-            
+        private boolean condicionCumple(String op, String num, int mario){
+            int comp = Integer.parseInt(num);
+            switch(op){
+                case "<":
+                    return mario < comp;
+                case "<=":
+                    return mario <= comp;
+                case ">":
+                    return mario > comp;
+                case ">=":
+                    return mario >= comp;
+                case "==":
+                    return mario == comp;
+                case "!=":
+                    return mario != comp;
+                
+            }
+            return false;
+        }
+
+    
+    public String obtenerRutaVideo(String nombreArchivo ) {
+        return "src/Videos/" + nombreArchivo;
+    }
+
     private void printConsole() {
         int sizeErrors = errors.size();
         if (sizeErrors > 0) {

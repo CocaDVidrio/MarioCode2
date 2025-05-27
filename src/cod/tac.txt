@@ -1,0 +1,6 @@
+call mover, 1
+ifFalse a>0 goto L0
+L0:
+call mover, 1
+call saltar, 1
+call mover, 1

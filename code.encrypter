@@ -1,6 +1,10 @@
 nivel()
 POW
-Mario m;
-mover(m,2);
-saltar(m,1);
-POW
+Mario a;
+mover(1);
+Tuberia(a>0) POW
+mover(1);
+saltar(1);
+END
+mover(1)
+END
